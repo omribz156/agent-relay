@@ -1,10 +1,10 @@
 # Mission 01: Llama 3.2 Relay V1
 
 Status:
-- queued
+- concluded
 
 Start:
-- tomorrow
+- 2026-03-23
 
 ## Goal
 
@@ -53,7 +53,7 @@ Not allowed:
 
 ## First-Day Scope
 
-Tomorrow we should:
+Current pass:
 
 1. install/check Ollama in WSL
 2. pull and run `llama3.2`
@@ -64,6 +64,30 @@ Tomorrow we should:
    - relay to Codex
    - escalate to frontier
    - block
+
+Done so far:
+- Ollama installed user-local in WSL
+- `llama3.2` pulled successfully
+- GPU path detected the GTX 970 but crashed on repeated real inference
+- CPU path works technically
+- trivial CPU smoke test returned `READY`
+- CPU run was judged unacceptable because it choked the whole machine
+- Windows-native Ollama was installed and tested
+- Windows-native server started, but still selected CPU instead of GPU
+
+Immediate next:
+- do not continue with `llama3.2` CPU as the main path
+- test smaller / lighter options
+- reconsider runtime strategy before prompt work goes deeper
+- if staying with Ollama, skip more stock-install retries and move straight to custom-build investigation
+
+Pivot note:
+- if the user-tested Qwen 2B path really runs on GPU, it becomes the next live candidate immediately
+- runtime fit now outranks prior preference for `llama3.2`
+
+Final conclusion:
+- `llama3.2` is not the path on this machine
+- keep this mission as historical context only
 
 ## First Evaluation Set
 
@@ -93,6 +117,7 @@ We should switch or compare models if `llama3.2`:
 - feels weak at intent recognition
 - answers when it should escalate
 - escalates too much and defeats the cost goal
+- is operationally too heavy for the machine even when output quality is fine
 
 ## If It Struggles
 

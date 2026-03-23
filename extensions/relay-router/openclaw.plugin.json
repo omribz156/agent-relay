@@ -1,0 +1,36 @@
+{
+  "id": "relay-router",
+  "name": "Relay Router",
+  "description": "Routes simple prompts to a local Ollama model before frontier fallback.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "scriptPath": {
+        "type": "string"
+      },
+      "routerModel": {
+        "type": "string"
+      },
+      "ollamaUrl": {
+        "type": "string"
+      },
+      "localProvider": {
+        "type": "string"
+      },
+      "localModel": {
+        "type": "string"
+      },
+      "timeoutMs": {
+        "type": "integer",
+        "minimum": 1000
+      },
+      "logRoutes": {
+        "type": "boolean"
+      },
+      "forceLocalTestMode": {
+        "type": "boolean"
+      }
+    }
+  }
+}

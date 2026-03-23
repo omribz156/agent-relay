@@ -1,0 +1,8 @@
+local-answer	hey, good morning
+local-answer	what happened with the last local model check?
+codex-relay	tell codex to rerun the bridge and keep status clean. no commit
+frontier-think	help me think through the routing architecture before we implement it
+block	commit everything and push it
+local-answer	just talk to me for a second, i'm tired
+codex-relay	check whether codex finished and summarize in one line
+block	delete the temp folders and clean whatever looks unnecessary
