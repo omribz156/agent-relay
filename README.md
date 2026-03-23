@@ -18,6 +18,18 @@ It is the wider control layer for:
 - Codex execution bridge
 - frontier/API escalation when tasks are genuinely complex
 
+## Current Status
+
+This repo contains useful research and working tooling.
+
+It does not currently mean:
+- "the whole local-first stack is production-ready"
+- "OpenClaw should run locally on this machine full-time"
+
+Current recommendation:
+- keep OpenClaw on normal frontier/API mode on this computer
+- keep this repo as the base for a later retry on stronger hardware
+
 ## Core Flow
 
 ```text
@@ -50,7 +62,57 @@ Phase one should be humble:
 - classify messages into a few lanes reliably
 - keep dangerous or ambiguous actions out of the local layer
 
-## Current Recommendation
+## What We Tried
+
+We tested two layers of the idea:
+
+1. local router harness
+2. live OpenClaw local-answer path
+
+### Router Harness
+
+This part worked well.
+
+Built here:
+- `prompts/qwen-router-v1.md`
+- `scripts/route-message.sh`
+- `scripts/eval-router.sh`
+- `tests/router-cases.tsv`
+- `tests/router-cases-hard.tsv`
+
+Results:
+- starter eval passed `8/8`
+- harder eval passed `15/15`
+
+Meaning:
+- a small local model can classify turns usefully on this machine
+- router research was not wasted
+
+### Live OpenClaw Local-Answer Path
+
+This part did not hold up on this machine.
+
+We built:
+- an OpenClaw plugin under `extensions/relay-router`
+- a runtime deploy path into `~/.openclaw/extensions/relay-router`
+- warm/deploy helpers for Ollama and the router
+
+What worked:
+- OpenClaw plugin integration
+- pre-model routing hook
+- model/provider override
+- local-only test mode
+
+What failed:
+- local reply turns were not stable enough under full OpenClaw load
+- Ollama/Qwen kept timing out or dying mid-turn
+- even tiny chat messages could fail in live use
+
+So the important split is:
+- local router research: yes
+- live local-answer OpenClaw runtime on this box: no
+
+## Hardware Reality
 
 Hardware reality:
 - GTX 970, 4GB VRAM
@@ -61,27 +123,25 @@ So first model work should target:
 - 1B to 3B class
 - routing and light conversation only
 
-Runtime blocker right now:
+Known runtime reality:
 - GPU path for `llama3.2` crashes on this machine
 - CPU path technically runs, but it chokes the whole machine
 
 Current best lead:
 - `qwen3.5:2b` does run in WSL with mixed CPU/GPU usage
-- early structured-router test passed `8/8` on the starter set
-- OpenClaw v1 router plugin is now wired to use that classifier before model selection
-- current live behavior is narrow on purpose:
-  - `local-answer` -> switch to `ollama/qwen3.5:2b`
-  - everything else -> stay on frontier default
-- runnable OpenClaw plugin copy lives under `/home/omri/.openclaw/extensions/relay-router`
-- source still lives in this repo under `extensions/relay-router`
-- so local inference now looks viable enough to keep pushing
-- next phase should focus on harder real prompts and guardrails, not more model roulette
+- it is still the best local router candidate we found here
+- it is not a reliable live OpenClaw local-answer engine on this machine
 
-Experiment end-state:
-- router harness work is good
-- live OpenClaw local-answer path is not stable enough on this machine
-- current recommendation is to keep OpenClaw on frontier/API for now
-- full write-up: [docs/openclaw-local-relay-experiment.md](docs/openclaw-local-relay-experiment.md)
+## Final Recommendation
+
+For the current computer:
+- keep OpenClaw on frontier/API
+- do not run the local-answer live path as daily infrastructure
+- keep the router assets and experiment notes
+- retry later on a stronger machine
+
+Full write-up:
+- [docs/openclaw-local-relay-experiment.md](docs/openclaw-local-relay-experiment.md)
 
 ## Repo Layout
 
@@ -109,3 +169,15 @@ cd /mnt/d/projects/agent-relay
 Temporary local-only test switch:
 - set `plugins.entries.relay-router.config.forceLocalTestMode` to `true`
 - keeps non-block turns on local Ollama while tuning chat behavior
+
+## Important Note
+
+OpenClaw has already been returned to its normal non-experimental baseline on
+this machine.
+
+So this repo currently represents:
+- research
+- tooling
+- the next-machine starting point
+
+Not an active local-answer deployment.
